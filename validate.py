@@ -98,17 +98,26 @@ class Task(_Tasklike):
     batchsys: Optional[str] = None
     trays: List[Tray]
 
+class Steering(BaseModel):
+    class Config:
+        extra = 'forbid'
+    parameters: Dict[str,Any] = Field({}, description="Values that can be interpolated in a $steering() expression anywhere in the config")
+    batchsys: Optional[str] = Field(None, description="Local batch system used for task submission. Largely obsolete")
+    system: Dict[str,Any] = Field([], description="A dict of things that appears to always be empty")
+    resources: List = Field([], description="A list of things that appears to always be empty")
+    data: List = Field([], description="A list of things that appears to always be empty")
+
 class Dataset(BaseModel):
     class Config:
         extra = 'forbid'
     version: int
-    dataset: Optional[int] = None
-    parent_id: Optional[int] = None
-    description: Optional[str] = None
-    categories: List[str] = []
-    difplus: Optional[Dict[str,Any]] = None
+    dataset: Optional[int] = Field(None, description="Dataset number, to be populated by IceProd when the config is submitted")
+    parent_id: Optional[int] = Field(None, description="Number of a related dataset, for example one that generated the input files")
+    description: Optional[str] = Field(None, description="Human-readable description")
+    categories: List[str] = Field([], description="Tags used for search on the IceProd webpage")
+    difplus: Optional[Dict[str,Any]] = Field(None, description="NSF-mandated metadata (that nonetheless seems to always be empty)")
     options: Optional[Dict[str,Any]] = None
-    steering: Optional[Dict[str,Any]] = {}
+    steering: Steering
     tasks: List[Task]
 
 if __name__ == "__main__":
