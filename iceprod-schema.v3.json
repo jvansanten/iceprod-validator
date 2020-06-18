@@ -1,0 +1,473 @@
+{
+  "title": "Dataset",
+  "type": "object",
+  "properties": {
+    "version": {
+      "title": "Version",
+      "type": "integer"
+    },
+    "dataset": {
+      "title": "Dataset",
+      "type": "integer"
+    },
+    "parent_id": {
+      "title": "Parent Id",
+      "type": "integer"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "categories": {
+      "title": "Categories",
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "difplus": {
+      "title": "Difplus",
+      "type": "object"
+    },
+    "options": {
+      "title": "Options",
+      "type": "object"
+    },
+    "steering": {
+      "title": "Steering",
+      "default": {},
+      "type": "object"
+    },
+    "tasks": {
+      "title": "Tasks",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Task"
+      }
+    }
+  },
+  "required": [
+    "version",
+    "tasks"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "Resource": {
+      "title": "Resource",
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "Data": {
+      "title": "Data",
+      "type": "object",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "description": "Type of storage. job_temp: temporary directory for each job",
+          "enum": [
+            "permanent",
+            "job_temp"
+          ],
+          "type": "string"
+        },
+        "movement": {
+          "title": "Movement",
+          "description": "When to move data files",
+          "enum": [
+            "input",
+            "output"
+          ],
+          "type": "string"
+        },
+        "transfer": {
+          "title": "Transfer",
+          "description": "Conditions under which to move data files",
+          "default": "exists",
+          "enum": [
+            "exists"
+          ],
+          "type": "string"
+        },
+        "remote": {
+          "title": "Remote",
+          "default": "",
+          "type": "string"
+        },
+        "local": {
+          "title": "Local",
+          "default": "",
+          "type": "string"
+        },
+        "compression": {
+          "title": "Compression",
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type",
+        "movement"
+      ],
+      "additionalProperties": false
+    },
+    "Class": {
+      "title": "Class",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "src": {
+          "title": "Src",
+          "type": "string"
+        },
+        "resource_name": {
+          "title": "Resource Name",
+          "default": "",
+          "type": "string"
+        },
+        "recursive": {
+          "title": "Recursive",
+          "default": false,
+          "type": "boolean"
+        },
+        "libs": {
+          "title": "Libs",
+          "default": "",
+          "type": "string"
+        },
+        "env_vars": {
+          "title": "Env Vars",
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "src"
+      ],
+      "additionalProperties": false
+    },
+    "MachineRequirements": {
+      "title": "MachineRequirements",
+      "type": "object",
+      "properties": {
+        "memory": {
+          "title": "Memory",
+          "description": "Memory in GB",
+          "default": 1,
+          "type": "number"
+        },
+        "disk": {
+          "title": "Disk",
+          "description": "Local disk in GB",
+          "default": 1,
+          "type": "number"
+        },
+        "time": {
+          "title": "Time",
+          "description": "Wallclock time in hours",
+          "default": 1,
+          "type": "number"
+        },
+        "os": {
+          "title": "Os",
+          "description": "OS_ARCH specification",
+          "type": "string"
+        },
+        "cpu": {
+          "title": "Cpu",
+          "description": "Number of CPU cores",
+          "default": 1,
+          "type": "integer"
+        },
+        "gpu": {
+          "title": "Gpu",
+          "description": "Number of GPUs",
+          "default": 0,
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Module": {
+      "title": "Module",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "parameters": {
+          "title": "Parameters",
+          "description": "Task-specific steering parameters",
+          "default": {},
+          "type": "object"
+        },
+        "resources": {
+          "title": "Resources",
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Resource"
+          }
+        },
+        "data": {
+          "title": "Data",
+          "description": "Files required as input to or output from this task",
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Data"
+          }
+        },
+        "classes": {
+          "title": "Classes",
+          "description": "Software distributions, e.g. tarballs, required for this task",
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Class"
+          }
+        },
+        "projects": {
+          "title": "Projects",
+          "description": "A list of things that appears to always be empty",
+          "default": [],
+          "type": "array",
+          "items": {}
+        },
+        "requirements": {
+          "title": "Requirements",
+          "description": "Minimum requirements to run this task",
+          "default": {
+            "memory": 1,
+            "disk": 1,
+            "time": 1,
+            "os": null,
+            "cpu": 1,
+            "gpu": 0
+          },
+          "allOf": [
+            {
+              "$ref": "#/definitions/MachineRequirements"
+            }
+          ]
+        },
+        "src": {
+          "title": "Src",
+          "description": "Script to invoke",
+          "type": "string"
+        },
+        "running_class": {
+          "title": "Running Class",
+          "description": "IPModule subclass to invoke",
+          "type": "string"
+        },
+        "env_shell": {
+          "title": "Env Shell",
+          "description": "Script to initialize environment",
+          "type": "string"
+        },
+        "env_clear": {
+          "title": "Env Clear",
+          "description": "Run env_shell in an empty environment",
+          "default": true,
+          "type": "boolean"
+        },
+        "args": {
+          "title": "Args",
+          "description": "Module arguments",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "src",
+        "env_shell",
+        "args"
+      ],
+      "additionalProperties": false
+    },
+    "Tray": {
+      "title": "Tray",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "parameters": {
+          "title": "Parameters",
+          "description": "Task-specific steering parameters",
+          "default": {},
+          "type": "object"
+        },
+        "resources": {
+          "title": "Resources",
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Resource"
+          }
+        },
+        "data": {
+          "title": "Data",
+          "description": "Files required as input to or output from this task",
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Data"
+          }
+        },
+        "classes": {
+          "title": "Classes",
+          "description": "Software distributions, e.g. tarballs, required for this task",
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Class"
+          }
+        },
+        "projects": {
+          "title": "Projects",
+          "description": "A list of things that appears to always be empty",
+          "default": [],
+          "type": "array",
+          "items": {}
+        },
+        "requirements": {
+          "title": "Requirements",
+          "description": "Minimum requirements to run this task",
+          "default": {
+            "memory": 1,
+            "disk": 1,
+            "time": 1,
+            "os": null,
+            "cpu": 1,
+            "gpu": 0
+          },
+          "allOf": [
+            {
+              "$ref": "#/definitions/MachineRequirements"
+            }
+          ]
+        },
+        "iterations": {
+          "title": "Iterations",
+          "description": "Number of reps to run",
+          "default": 1,
+          "type": "integer"
+        },
+        "modules": {
+          "title": "Modules",
+          "description": "Scripts to invoke in this task",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Module"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "modules"
+      ],
+      "additionalProperties": false
+    },
+    "Task": {
+      "title": "Task",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "description": "Name of this abstract task",
+          "type": "string"
+        },
+        "parameters": {
+          "title": "Parameters",
+          "description": "Task-specific steering parameters",
+          "default": {},
+          "type": "object"
+        },
+        "resources": {
+          "title": "Resources",
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Resource"
+          }
+        },
+        "data": {
+          "title": "Data",
+          "description": "Files required as input to or output from this task",
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Data"
+          }
+        },
+        "classes": {
+          "title": "Classes",
+          "description": "Software distributions, e.g. tarballs, required for this task",
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Class"
+          }
+        },
+        "projects": {
+          "title": "Projects",
+          "description": "A list of things that appears to always be empty",
+          "default": [],
+          "type": "array",
+          "items": {}
+        },
+        "requirements": {
+          "title": "Requirements",
+          "description": "Minimum requirements to run this task",
+          "default": {
+            "memory": 1,
+            "disk": 1,
+            "time": 1,
+            "os": null,
+            "cpu": 1,
+            "gpu": 0
+          },
+          "allOf": [
+            {
+              "$ref": "#/definitions/MachineRequirements"
+            }
+          ]
+        },
+        "depends": {
+          "title": "Depends",
+          "description": "Names of tasks this task depends on",
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "batchsys": {
+          "title": "Batchsys",
+          "type": "string"
+        },
+        "trays": {
+          "title": "Trays",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tray"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "trays"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
